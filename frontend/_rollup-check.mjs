@@ -4,9 +4,11 @@
  * CSS/静态资源做空模块占位，define 用字符串替换模拟 Vite 的 define 插件。
  */
 import path from 'node:path'
+import fs from 'node:fs'
 import { rollup } from 'rollup'
 import vue from '@vitejs/plugin-vue'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
 
 const root = process.cwd()
 const srcDir = path.join(root, 'src')
@@ -24,7 +26,7 @@ function resolveWithExt(base) {
   ]
   return candidates.find((p) => {
     try {
-      return require('node:fs').statSync(p).isFile()
+      return fs.statSync(p).isFile()
     } catch (e) {
       return false
     }
@@ -87,7 +89,14 @@ const definePlugin = {
 const started = Date.now()
 const bundle = await rollup({
   input: path.join(srcDir, 'main.js'),
-  plugins: [assetPlugin, aliasPlugin, vue(), nodeResolve({ browser: true, preferBuiltins: false, extensions: ['.mjs', '.js', '.json', '.vue'] }), definePlugin],
+  plugins: [
+    assetPlugin,
+    aliasPlugin,
+    vue(),
+    nodeResolve({ browser: true, preferBuiltins: false, extensions: ['.mjs', '.js', '.json', '.vue'] }),
+    commonjs({ include: /node_modules/, transformMixedEsModules: true }),
+    definePlugin
+  ],
   onwarn(warning, warn) {
     if (warning.code === 'CIRCULAR_DEPENDENCY') return
     warnings.push(`[${warning.code}] ${warning.message}`)
