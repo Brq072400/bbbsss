@@ -1,0 +1,33 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.libs/
+wheels/
+.tmp/
+*.log
+
+# ===== 环境与密钥 =====
+.env
+backend/.env
+
+# ===== 数据库 =====
+*.db
+*.sqlite3
+backend/fittrack.db
+
+# ===== 上传文件 =====
+backend/uploads/
+
+# ===== 前端 =====
+node_modules/
+dist/
+.vite/
+*.local
+
+# ===== 编辑器/系统 =====
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
